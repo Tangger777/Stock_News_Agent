@@ -1,0 +1,21 @@
+# TradingView Configuration Template
+# Copy this file to config.yaml and fill in your own values
+
+tradingview:
+  headers:
+    user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    # To get your cookie:
+    # 1. Open your browser and go to tradingview.com
+    # 2. Open Developer Tools (F12)
+    # 3. Go to Network tab
+    # 4. Refresh the page
+    # 5. Click on any request to tradingview.com
+    # 6. Copy the entire Cookie header value
+    cookie: "YOUR_COOKIE_HERE"
+
+# News Fetching Configuration  
+news:
+  default_symbol: "NVDA"
+  default_date: "2025-07-30"
+  window_days: 1
+  timeout_seconds: 10
