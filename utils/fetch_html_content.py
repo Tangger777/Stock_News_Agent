@@ -183,11 +183,11 @@ def fetch_tradingview_news(symbol, target_date = '2025-07-31', window = 1):
         published_dt = datetime.utcfromtimestamp(item["published"])
         if published_dt < start_time or published_dt > end_time:
             continue
-        if item['source'] == 'GuruFocus':
-            continue  # Skip GuruFocus news items
+        link = item.get("link") or f"https://www.tradingview.com{item.get('storyPath','')}"
+        if not link.startswith('https://www.tradingview.com'):
+            continue
         related = ", ".join([s["symbol"] for s in item.get("relatedSymbols", [])])
-        link = item.get("link") or f"https://www.tradingview.com{item.get('storyPath','')}"        
-        print(f"Fetching {item.get('title)')}\n")
+        print(f"Fetching {item.get('title')}\n")
         content = fetch_news_content(link)['content']
         all_news["news"].append({
             "title": item.get("title", "No Title"),
@@ -203,7 +203,7 @@ def fetch_tradingview_news(symbol, target_date = '2025-07-31', window = 1):
 if __name__ == "__main__":
     # This part will be executed when the script is run directly.
     
-    news_data = fetch_tradingview_news('NVDA',target_date='2025-07-30')
+    news_data = fetch_tradingview_news('TSLA',target_date='2025-07-31')
     save_to_json(news_data)
     
     # news_data = fetch_tradingview_news('TSLA',target_date='2025-07-30')
