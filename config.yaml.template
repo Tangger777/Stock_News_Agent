@@ -19,3 +19,13 @@ news:
   default_date: "2025-07-30"
   window_days: 1
   timeout_seconds: 10
+
+# Database Configuration
+database:
+  file_path: "news_data.db" # Path to the SQLite database file
+
+# Large Language Model (LLM) Configuration
+llm:
+  api_key: "YOUR_LLM_API_KEY_HERE" # Your LLM provider API key (e.g., OpenAI, Anthropic)
+  model_name: "gpt-3.5-turbo" # The name of the LLM model to use (e.g., gpt-4, claude-3-opus-20240229)
+  api_base: "https://api.openai.com/v1" # Base URL for the LLM API (e.g., for OpenAI, or your custom endpoint)
