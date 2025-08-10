@@ -2,6 +2,7 @@ import json
 import requests
 import yaml
 import os
+import time
 from datetime import datetime, timedelta, timezone
 from bs4 import BeautifulSoup
 
@@ -188,6 +189,8 @@ def fetch_tradingview_news(symbol, target_date = '2025-07-31', window = 1):
             continue
         related = ", ".join([s["symbol"] for s in item.get("relatedSymbols", [])])
         print(f"Fetching {item.get('title')}\n")
+        time.sleep(2)
+
         content = fetch_news_content(link)['content']
         all_news["news"].append({
             "title": item.get("title", "No Title"),
