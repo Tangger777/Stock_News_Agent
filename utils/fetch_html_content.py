@@ -2,7 +2,7 @@ import json
 import requests
 import yaml
 import os
-import time
+import time, random
 from datetime import datetime, timedelta, timezone
 from bs4 import BeautifulSoup
 
@@ -33,10 +33,11 @@ def fetch_html_content(url):
     
     headers = {
         'User-Agent': headers_config.get('user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'),
-        'cookie': headers_config.get('cookie', '')
+        'cookie': headers_config.get('cookie', ''),
+        'Referer': headers_config.get('referer', 'https://www.tradingview.com/')
     }
     
-    # 获取超时设置
+    # 获取超时设置https://www.tradingview.com/
     timeout = config.get('news', {}).get('timeout_seconds', 10)
     
     try:
@@ -153,12 +154,32 @@ def fetch_news_content(news_url):
         news_data = {"title": "Error", "content": "Failed to retrieve HTML content."}
     return news_data
 
+def get_exchange_from_symbol(symbol):
+    config = load_config()
+    alpha_vantage_config = config.get('alpha_vantage', {})
+    api_key = alpha_vantage_config.get('api_key', '')
+    if not api_key:
+        raise ValueError("Alpha Vantage API key is not configured in config.yaml.")
+    
+    url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}"
+    r = requests.get(url)
+    data = r.json()
+    if 'Exchange' in data:
+        return data['Exchange']
+    else:
+        raise ValueError(f"Could not retrieve exchange information for symbol: {symbol}")
+    
+
 def fetch_tradingview_news(symbol, target_date = '2025-07-31', window = 1):
     url = "https://news-mediator.tradingview.com/news-flow/v1/news"
+    try:
+        exchange = get_exchange_from_symbol(symbol)
+    except:
+        exchange = "NASDAQ"  # Default to NASDAQ if symbol not found
     params = {
         "filter": [
             "lang:en",
-            f"symbol:NASDAQ:{symbol}"
+            f"symbol:{exchange}:{symbol}"
         ],
         "streaming": "false"  # Set to "true" for streaming, "false" for a single snapshot
     }
@@ -189,7 +210,7 @@ def fetch_tradingview_news(symbol, target_date = '2025-07-31', window = 1):
             continue
         related = ", ".join([s["symbol"] for s in item.get("relatedSymbols", [])])
         print(f"Fetching {item.get('title')}\n")
-        time.sleep(2)
+        time.sleep(random.uniform(1,4))
 
         content = fetch_news_content(link)['content']
         all_news["news"].append({
